@@ -9,7 +9,7 @@
   <p>Name Servers:</p>
   <ul>
     <% @locals[:name_servers].each do |name_server| %>
-      <li><%= name_server.to_s %></li>
+      <li><%= name_server.name.to_s %></li>
     <% end %>
   </ul>
 <% end %>
