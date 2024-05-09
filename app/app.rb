@@ -1,5 +1,6 @@
 require 'erb'
 require 'resolv'
+require 'pry'
 
 class App
   def call(env)
