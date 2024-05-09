@@ -1,4 +1,5 @@
 require 'erb'
+require 'resolv'
 
 class App
   def call(env)
@@ -7,7 +8,13 @@ class App
 
     case path
     when '/'
-      render("home")
+      url = req.params["url"]
+
+      if url
+        render("home", url: url, name_servers: name_servers_for(url))
+      else
+        render("home")
+      end
     else
       handle_missing_path
     end
@@ -15,7 +22,8 @@ class App
 
   private
 
-  def render(template, status_code: 200)
+  def render(template, status_code: 200, **locals)
+    @locals = locals
     @content = render_template(template)
     body = render_template("layout")
     headers = {"Content-Type" => "text/html; charset=utf-8"}
@@ -34,5 +42,11 @@ class App
     headers = {"Content-Type" => "text/html; charset=utf-8"}
 
     [404, headers, [body]]
+  end
+
+  def name_servers_for(url)
+    host = URI(url).host
+    res = Resolv::DNS.new
+    res.getresources(host, Resolv::DNS::Resource::IN::NS)
   end
 end
